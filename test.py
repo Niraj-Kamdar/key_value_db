@@ -48,39 +48,39 @@ class TestDataStore(unittest.TestCase):
         value = {"age": 24, "gender": "male"}
         self.dstore["alice"] = value
         self.exception_tester(
-                key="alice",
-                value={"age": 26, "gender": "male"},
-                exc=KeyError,
-                msg="Key already exists!"
+            key="alice",
+            value={"age": 26, "gender": "male"},
+            exc=KeyError,
+            msg="Key already exists!",
         )
         del self.dstore["alice"]
 
     def test_memory_constraints(self):
         key = secrets.token_urlsafe(33)
         self.exception_tester(
-                key=key,
-                value={"age": 26, "gender": "male"},
-                exc=KeyError,
-                msg="length of the key has to be less than 32 characters!"
+            key=key,
+            value={"age": 26, "gender": "male"},
+            exc=KeyError,
+            msg="length of the key has to be less than 32 characters!",
         )
         del self.dstore[key]
 
         self.exception_tester(
-                key="alice",
-                value={"age": 26, "gender": "male", "garbage": "g" * 16384},
-                exc=ValueError,
-                msg="JSON payload exceeds maximum memory limit (16KB)!"
+            key="alice",
+            value={"age": 26, "gender": "male", "garbage": "g" * 16384},
+            exc=ValueError,
+            msg="JSON payload exceeds maximum memory limit (16KB)!",
         )
         del self.dstore["alice"]
 
     def test_non_json_value(self):
         self.exception_tester(
-                key="alice",
-                value="bob",
-                exc=ValueError,
-                msg="value has to be a dictionary!"
+            key="alice",
+            value="bob",
+            exc=ValueError,
+            msg="value has to be a dictionary!",
         )
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

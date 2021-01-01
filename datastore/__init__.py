@@ -26,13 +26,14 @@ class DataStore:
         name (str): name of the file where data has been stored.
         db (object): sqlite3 database connection object
     """
+
     def __init__(self, filename=f"{secrets.token_urlsafe(8)}.db"):
         self.name = filename
         self.db = sqlite3.connect(self.name)
         self.db.row_factory = _row_factory
         self.cursor = self.db.cursor()
         self.cursor.execute(
-                """
+            """
                 CREATE TABLE data(
                     key VARCHAR(32) PRIMARY KEY NOT NULL,
                     value TEXT NOT NULL,
@@ -91,7 +92,7 @@ class DataStore:
             try:
                 self.cursor.execute(
                     "INSERT INTO data(key, value, ttl) VALUES (?, ?, ?)",
-                    (key, value, ttl + time())
+                    (key, value, ttl + time()),
                 )
             except sqlite3.IntegrityError:
                 raise KeyError("Key already exists!")
@@ -103,8 +104,7 @@ class DataStore:
                 raise ValueError("JSON payload exceeds maximum memory limit (16KB)!")
             try:
                 self.cursor.execute(
-                    "INSERT INTO data(key, value) VALUES (?, ?)",
-                    (key, value)
+                    "INSERT INTO data(key, value) VALUES (?, ?)", (key, value)
                 )
             except sqlite3.IntegrityError:
                 raise KeyError("Key already exists!")
@@ -114,4 +114,3 @@ class DataStore:
         """ Deletes the entry associated with the given key from the database."""
         self.cursor.execute("DELETE FROM data WHERE key=?", (key,))
         self.db.commit()
-
